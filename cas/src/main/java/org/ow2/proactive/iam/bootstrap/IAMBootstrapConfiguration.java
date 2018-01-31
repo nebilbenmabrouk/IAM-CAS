@@ -1,7 +1,7 @@
 package org.ow2.proactive.iam.bootstrap;
 
 import lombok.extern.slf4j.Slf4j;
-import main.java.org.ow2.proactive.iam.bootstrap.LDAPBootstrap;
+import org.ow2.proactive.iam.bootstrap.LDAPBootstrap;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,30 +33,7 @@ public class IAMBootstrapConfiguration {
     @Value("${iam.backend}")
     private  String backend;
 
-    //@Autowired
-    //private IAMPropertiesBean propertiesBean;
 
-    /*@Autowired
-    @Qualifier("ldapBean")
-    private LDAPBean ldapBean;*/
-
-    /*
-    @Bean
-    public IAMPropertiesBean propertiesBean() {
-        System.out.println("backend: "+getBackend());
-        return new IAMPropertiesBean();
-    }
-
-    @Bean
-    public LDAPRunner ldapRunner() {
-        return new LDAPRunner();
-    }
-
-
-    @Bean
-    public LDAPBean ldapBean() {
-        return new LDAPBean();
-    }*/
 
     public String getBackend() {
         return backend;
@@ -66,10 +43,6 @@ public class IAMBootstrapConfiguration {
         this.backend = backend;
     }
 
-    /*public void start(){
-        System.out.println("backend: "+getBackend());
-        if (getBackend().equals("embeddedLDAP")) ldapBean.start();
-    }*/
 
     @PostConstruct
     public void boot(){
@@ -81,7 +54,7 @@ public class IAMBootstrapConfiguration {
     @PreDestroy
     public void stop(){
         if (getBackend().equals(ldapBackend)){
-            LDAPBootstrap.boot();
+            //Stop LDAP Server
         }
     }
 }

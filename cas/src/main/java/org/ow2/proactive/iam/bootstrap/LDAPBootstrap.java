@@ -1,4 +1,4 @@
-package main.java.org.ow2.proactive.iam.bootstrap;
+package org.ow2.proactive.iam.bootstrap;
 
 import org.ow2.proactive.iam.backend.embedded.ldap.EmbeddedLDAPServer;
 import org.ow2.proactive.iam.identity.provisioning.LocalLDAPIdentityManagement;

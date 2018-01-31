@@ -1,4 +1,4 @@
-package main.java.org.ow2.proactive.iam.backend.embedded.ldap;
+package org.ow2.proactive.iam.backend.embedded.ldap;
 
 import java.io.File;
 import java.io.IOException;

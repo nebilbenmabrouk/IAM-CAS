@@ -233,7 +233,7 @@ public class PropertiesHelper {
     /**
      * Returns the value of this property as a boolean.
      * If value is not a boolean, an exception will be thrown.<br>
-     * The behavior of this method is the same as the {@link java.lang.Boolean#parseBoolean(String s)}.
+     * The behavior of this method is the same as the {@link Boolean#parseBoolean(String s)}.
      *
      * @return the value of this property.
      */
