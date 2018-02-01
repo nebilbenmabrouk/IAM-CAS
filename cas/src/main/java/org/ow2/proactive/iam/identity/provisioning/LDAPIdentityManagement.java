@@ -25,6 +25,7 @@
  */
 package org.ow2.proactive.iam.identity.provisioning;
 
+import java.io.BufferedInputStream;
 import java.security.MessageDigest;
 import java.util.*;
 import java.util.Base64;
@@ -41,31 +42,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.ow2.proactive.iam.backend.embedded.ldap.EmbeddedLDAPServer;
-import org.ow2.proactive.iam.util.PropertiesHelper;
 
 
-public class LocalLDAPIdentityManagement implements IdentityManagement {
+public class LDAPIdentityManagement implements IdentityManagement {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(Class.class);
 
-    private DirectoryService ds = EmbeddedLDAPServer.INSTANCE.getlService();
+    private static DirectoryService ds = EmbeddedLDAPServer.INSTANCE.getlService();
 
     private String usersBase = "ou=users,dc=activeeon,dc=com";
 
     private String encryptionAlgorithm = "SHA";
-
-    public LocalLDAPIdentityManagement(String ldapPropertiesFile) {
-        try {
-            //load properties
-            PropertiesHelper propHelper = new PropertiesHelper(ldapPropertiesFile);
-
-            usersBase = propHelper.getValueAsString("users.base", usersBase);
-            encryptionAlgorithm = propHelper.getValueAsString("password.encryption.algorithm", encryptionAlgorithm);
-
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-    }
 
     public boolean insert(Identity id) {
         try {
@@ -160,16 +147,14 @@ public class LocalLDAPIdentityManagement implements IdentityManagement {
     }
 
     /**
-     * Imports given LDIF file to the directory using given directory service and schema manager.
+     * Loads identities to the ldap directory using the given inputstream from a LDIF file.
      *
-     * @param ldifFile
+     * @param ldifStream
      * @throws Exception
      */
-    public void importLdif(String ldifFile) throws Exception {
+    public static void importLdif(BufferedInputStream ldifStream) throws Exception {
 
-        LdifReader ldifReader = new LdifReader(Thread.currentThread()
-                                                     .getContextClassLoader()
-                                                     .getResourceAsStream(ldifFile));
+        LdifReader ldifReader = new LdifReader(ldifStream);
         try {
 
             for (LdifEntry ldifEntry : ldifReader) {
@@ -180,11 +165,12 @@ public class LocalLDAPIdentityManagement implements IdentityManagement {
         } finally {
             ldifReader.close();
             logger.info("LDIF identities loaded");
+            System.out.println("identities loaded");
         }
 
     }
 
-    private void checkPartition(LdifEntry ldifEntry) throws Exception {
+    private static void checkPartition(LdifEntry ldifEntry) throws Exception {
         Dn dn = ldifEntry.getDn();
         Dn parent = dn.getParent();
         try {
