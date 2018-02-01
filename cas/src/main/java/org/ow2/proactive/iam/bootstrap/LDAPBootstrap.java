@@ -1,23 +1,50 @@
 package org.ow2.proactive.iam.bootstrap;
 
+import java.io.*;
+
+import org.ow2.proactive.iam.identity.provisioning.LDAPIdentityManagement;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.Resource;
+
 import org.ow2.proactive.iam.backend.embedded.ldap.EmbeddedLDAPServer;
-import org.ow2.proactive.iam.identity.provisioning.LocalLDAPIdentityManagement;
+import org.springframework.core.io.ResourceLoader;
 
 public class LDAPBootstrap {
 
-    public static void boot(){
+    private ResourceLoader resourceLoader;
+
+    private static final String ldifFile = "classpath:/config/iam/identities.ldif";
+
+    public static void loadLDIF(){
+
+        ApplicationContext appContext =
+                new ClassPathXmlApplicationContext();
+
+        Resource ldifResource =
+                appContext.getResource(ldifFile);
+
+        try{
+
+            BufferedInputStream bis = new BufferedInputStream(ldifResource.getInputStream());
+            LDAPIdentityManagement.importLdif(bis);
+
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+            //e.printStackTrace();
+        }
+
+    }
+
+    public static void startServer(){
         try {
 
             EmbeddedLDAPServer.INSTANCE.startLDAPServer();
 
-            //log.debug("Loading identities");
-            //LocalLDAPIdentityManagement idm = new LocalLDAPIdentityManagement(iamProperties);
-            //idm.importLdif(ldifFile);
-            //}
-
         } catch (Exception e) {
             //log.error(e.getMessage());
             System.err.println(e.getMessage());
+            //e.printStackTrace();
         }
     }
 

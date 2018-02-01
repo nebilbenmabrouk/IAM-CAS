@@ -36,9 +36,6 @@ import org.apache.directory.server.protocol.shared.transport.TcpTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.ow2.proactive.iam.util.PropertiesHelper;
-import org.ow2.proactive.iam.util.PropertyType;
-
 
 public enum EmbeddedLDAPServer {
 
@@ -47,27 +44,15 @@ public enum EmbeddedLDAPServer {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static final String ldapPropertiesFile = "iam.properties";
-
-    private static final String ldifFile = "identities.ldif";
-
+    private static final DirectoryServiceFactory lFactory = new DefaultDirectoryServiceFactory();
     private static DirectoryService lService;
-
-    private static LdapServer lServer;
+    private static LdapServer lServer = new LdapServer();
 
     private static String host = "localhost";
-
     private static int port = 11389;
 
-    /*private void configureServer() {
-        PropertiesHelper propHelper = new PropertiesHelper(ldapPropertiesFile);
-        port = propHelper.getValueAsInt("ldap.port", PropertyType.INTEGER, port);
-    }*/
-
     public void startLDAPServer() throws Exception {
-        //configureServer();
 
-            final DirectoryServiceFactory lFactory = new DefaultDirectoryServiceFactory();
             lFactory.init("ProActiveEmbeddedLDAP");
             logger.debug("Factory initialized");
 
@@ -78,27 +63,28 @@ public enum EmbeddedLDAPServer {
             InstanceLayout il = new InstanceLayout("/tmp/ProActiveEmbeddedLDAP");
             lService.setInstanceLayout(il);
 
-            lServer = new LdapServer();
             lServer.setTransports(new TcpTransport("localhost", port));
             lServer.setDirectoryService(lService);
             logger.debug("LDAP Server initialized");
 
-        if (!lService.isStarted()){
-            lService.startup();
-            lServer.start();
+            if (lServer.isStarted()){
+                logger.warn("LDAP Server already started !!");
+                System.out.println("LDAP Server already started !!");
+            } else {
 
-            logger.info("LDAP Server started");
-            System.out.println("LDAP Server started");
-        } else {
-            logger.warn("LDAP Server already started !!");
-            System.out.println("LDAP Server already started !!");
-        }
+                lService.startup();
+                lServer.start();
+
+                logger.info("LDAP Server started");
+                System.out.println("LDAP Server started");
+            }
     }
 
     public void shutdownLDAPServer() throws Exception {
         lServer.stop();
         lService.shutdown();
         logger.info("LDAP Server stopped");
+        System.out.println("LDAP Server stopped");
     }
 
     public DirectoryService getlService() {
@@ -106,7 +92,7 @@ public enum EmbeddedLDAPServer {
     }
 
     public void setlService(DirectoryService lService) {
-        EmbeddedLDAPServer.lService = lService;
+        EmbeddedLDAPServer.INSTANCE.lService = lService;
     }
 
     public LdapServer getlServer() {
@@ -114,6 +100,6 @@ public enum EmbeddedLDAPServer {
     }
 
     public void setlServer(LdapServer lServer) {
-        EmbeddedLDAPServer.lServer = lServer;
+        EmbeddedLDAPServer.INSTANCE.lServer = lServer;
     }
 }

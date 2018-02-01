@@ -1,0 +1,8 @@
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://localhost:8443/cas/status/dashboard(\\z|/.*)",
+  "name" : "CAS Admin Dashboard",
+  "id" : 1,
+  "description" : "CAS dashboard and administrative endpoints",
+  "evaluationOrder" : 5000
+}
