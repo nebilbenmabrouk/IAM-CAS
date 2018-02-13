@@ -165,9 +165,8 @@ public class LDAPIdentityManagement implements IdentityManagement {
         } finally {
             ldifReader.close();
             logger.info("LDIF identities loaded");
-            System.out.println("identities loaded");
+            System.out.println("LDIF identities loaded");
         }
-
     }
 
     private static void checkPartition(LdifEntry ldifEntry) throws Exception {

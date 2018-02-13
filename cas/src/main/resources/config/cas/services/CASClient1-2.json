@@ -1,0 +1,10 @@
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://localhost:8444/iam-client-1(\\z|/.*)",
+  "name" : "CAS WebApp Client 1",
+  "id" : 2,
+  "description" : "CAS java webapp client",
+  "evaluationOrder" : 2,
+  "logoutType" : "FRONT_CHANNEL",
+  "logoutUrl" : "https://localhost:8444/iam-client-1/logout.jsp"
+}

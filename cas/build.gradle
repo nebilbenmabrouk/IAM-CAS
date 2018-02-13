@@ -24,7 +24,8 @@ idea {
 }
 
 bootRepackage {
-    mainClass = "org.apereo.cas.web.CasWebApplication"
+    //mainClass = "org.apereo.cas.web.CasWebApplication"
+    mainClass = "org.ow2.proactive.iam.bootstrap.BootstrapApplication"
     executable = true
 }
 
@@ -42,8 +43,10 @@ repositories {
 dependencies {
     //compile "org.apereo.cas:cas-server-webapp-tomcat:${project.'cas.version'}@war"
     compile "org.apereo.cas:cas-server-webapp-jetty:${project.'cas.version'}@war"
+    compile "org.apereo.cas:cas-server-webapp-init:${project.'cas.version'}"
     compile "org.apereo.cas:cas-server-support-ldap:${project.'cas.version'}"
     compile "org.apereo.cas:cas-server-support-json-service-registry:${project.'cas.version'}"
+    compile "org.apereo.cas:cas-server-support-rest:${project.'cas.version'}"
 
     //compile group: 'org.apache.directory.server', name: 'apacheds-all', version: '2.0.0-M24'
     compile group: 'org.apache.directory.api', name: 'api-all', version: '1.0.0'

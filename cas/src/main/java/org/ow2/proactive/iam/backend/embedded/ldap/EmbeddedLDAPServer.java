@@ -25,11 +25,12 @@
  */
 package org.ow2.proactive.iam.backend.embedded.ldap;
 
-//import org.apache.directory.server.core.api.*;
+import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.server.core.api.DirectoryService;
 import org.apache.directory.server.core.api.InstanceLayout;
 import org.apache.directory.server.core.factory.DefaultDirectoryServiceFactory;
 import org.apache.directory.server.core.factory.DirectoryServiceFactory;
+import org.apache.directory.server.core.partition.impl.avl.AvlPartition;
 import org.apache.directory.server.ldap.LdapServer;
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
 
@@ -63,6 +64,7 @@ public enum EmbeddedLDAPServer {
             InstanceLayout il = new InstanceLayout("/tmp/ProActiveEmbeddedLDAP");
             lService.setInstanceLayout(il);
 
+
             lServer.setTransports(new TcpTransport("localhost", port));
             lServer.setDirectoryService(lService);
             logger.debug("LDAP Server initialized");
@@ -75,9 +77,19 @@ public enum EmbeddedLDAPServer {
                 lService.startup();
                 lServer.start();
 
-                logger.info("LDAP Server started");
-                System.out.println("LDAP Server started");
+                logger.info("LDAP server started");
+                System.out.println("LDAP server started");
             }
+    }
+
+    public void addPartition(String BASE_DN) throws Exception{
+        AvlPartition partition = new AvlPartition(
+                lService.getSchemaManager());
+        partition.setId("");
+        partition.setSuffixDn(new Dn(lService.getSchemaManager(),
+                BASE_DN));
+        partition.initialize();
+        lService.addPartition(partition);
     }
 
     public void shutdownLDAPServer() throws Exception {

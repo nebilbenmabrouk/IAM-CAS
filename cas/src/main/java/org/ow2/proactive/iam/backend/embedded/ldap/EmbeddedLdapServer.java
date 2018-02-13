@@ -74,6 +74,8 @@ public enum EmbeddedLdapServer {
             partition.setId(INSTANCE_NAME);
             partition.setSuffixDn(new Dn(directoryService.getSchemaManager(),
                     BASE_DN));
+
+            //Should be removed
             partition.initialize();
             directoryService.addPartition(partition);
 
