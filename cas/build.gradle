@@ -46,7 +46,13 @@ dependencies {
     compile "org.apereo.cas:cas-server-webapp-init:${project.'cas.version'}"
     compile "org.apereo.cas:cas-server-support-ldap:${project.'cas.version'}"
     compile "org.apereo.cas:cas-server-support-json-service-registry:${project.'cas.version'}"
+
+    //REST
     compile "org.apereo.cas:cas-server-support-rest:${project.'cas.version'}"
+    //REST for JWT
+    compile "org.apereo.cas:cas-server-support-rest-tokens:${project.'cas.version'}"
+    //JWT
+    compile "org.apereo.cas:cas-server-support-token-tickets:${project.'cas.version'}"
 
     //compile group: 'org.apache.directory.server', name: 'apacheds-all', version: '2.0.0-M24'
     compile group: 'org.apache.directory.api', name: 'api-all', version: '1.0.0'
@@ -55,7 +61,6 @@ dependencies {
     compile group: 'org.apache.directory.server', name: 'apacheds-core-annotations', version: '2.0.0-M24'
     compile group: 'org.apache.directory.server', name: 'apacheds-protocol-ldap', version: '2.0.0-M24'
 
-    //compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
 }
 

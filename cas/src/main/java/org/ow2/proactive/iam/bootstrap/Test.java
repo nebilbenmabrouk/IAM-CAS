@@ -36,7 +36,7 @@ public class Test {
 
     private static String securityCredentials = "secret";
 
-    private String rootDn = "dc=activeeon,dc=com";
+    private static String rootDn = "dc=activeeon,dc=com";
 
     private static String usersBase = "ou=users,dc=activeeon,dc=com";
 
@@ -47,13 +47,13 @@ public class Test {
     public static void main(String [] args){
         try {
 
-            EmbeddedLDAPServer.INSTANCE.startLDAPServer();
+            //EmbeddedLDAPServer.INSTANCE.startLDAPServer();
 
-            BufferedInputStream bis = new BufferedInputStream(Thread.currentThread()
+           /* BufferedInputStream bis = new BufferedInputStream(Thread.currentThread()
                     .getContextClassLoader()
                     .getResourceAsStream("config/iam/identities.ldif"));
 
-            LDAPIdentityManagement.importLdif(bis);
+            LDAPIdentityManagement.importLdif(bis);*/
 
             init();
             search("tobias");
@@ -65,26 +65,16 @@ public class Test {
             env.put(Context.PROVIDER_URL, "ldap://" + "ldap.forumsys.com"   + ":" + "389");
             env.put(Context.SECURITY_PRINCIPAL, "cn=read-only-admin,dc=example,dc=com");
             env.put(Context.SECURITY_CREDENTIALS, "password");
-
             String id = "einstein";
-
             DirContext ctx = new InitialDirContext(env);
-
             SearchControls sc = new SearchControls();
             sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
             String filter = "uid="+id;
-
             NamingEnumeration results = ctx.search("dc=example,dc=com", filter, sc);
-
-
             while (results.hasMore()) {
                 SearchResult sr = (SearchResult) results.next();
-
                 System.out.println(sr.toString());
-
                 Attributes attrs = sr.getAttributes();
-
                 Attribute attr = attrs.get("uid");
                 if (attr != null)
                     System.out.println("Entry found: " + attr.get());
@@ -123,12 +113,20 @@ public class Test {
             sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
             String filter = "uid="+id;
+            //String filter = "objectclass=*";
 
-            NamingEnumeration results = ctx.search(usersBase, filter, sc);
+
+            NamingEnumeration results = ctx.search(rootDn, filter, sc);
 
             while (results.hasMore()) {
                 SearchResult sr = (SearchResult) results.next();
                 Attributes attrs = sr.getAttributes();
+
+               // for (int i=0; i< attrs.size(); i++){
+                System.out.println(attrs.get("uid").get());
+                System.out.println(attrs.get("sn").get());
+                System.out.println(attrs.get("cn").get());
+                //}
 
                 Attribute attr = attrs.get("uid");
                 if (attr != null)
