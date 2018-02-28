@@ -19,7 +19,7 @@
       "@class" : "java.util.TreeMap",
       "sn" : "surname",
       "cn" : "commonName",
-      "memberOf" : "Role"
+      "role" : "role"
     }
   }
 }

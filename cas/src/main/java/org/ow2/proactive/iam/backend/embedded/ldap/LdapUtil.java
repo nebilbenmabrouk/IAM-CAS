@@ -34,6 +34,7 @@ public class LdapUtil {
         roleAttributeType.setEnabled( true );
 
         directoryService.getSchemaManager().add( roleAttributeType );
+        logger.debug("Atrribute type 'role' added to LDAP schema");
     }
 
     public void addPartition(Dn dn) throws Exception {
@@ -42,6 +43,7 @@ public class LdapUtil {
         partition.setId(dn.getName());
         partition.setSuffixDn(dn);
         directoryService.addPartition(partition);
+        logger.debug("Partition '"+ dn.toString() +"' added to LDAP schema");
     }
 
     public void importLdif(BufferedInputStream ldifStream) throws Exception {
@@ -55,6 +57,7 @@ public class LdapUtil {
             }
         } finally {
             ldifReader.close();
+            logger.info("Identities added to LDAP server");
         }
     }
 

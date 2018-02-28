@@ -1,60 +1,38 @@
 package org.ow2.proactive.iam.bootstrap;
 
-import lombok.extern.slf4j.Slf4j;
+import org.ow2.proactive.iam.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.io.IOException;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-@Configuration("iamBootstrap")
-@PropertySource("classpath:/config/iam/iam.properties")
-@ConfigurationProperties
-@Slf4j
-@RefreshScope
 public class IAMBootstrapConfiguration   {
 
-    private static final String ldapBackend = "embeddedLDAP";
+    private static final Logger logger = LoggerFactory.getLogger(IAMBootstrapConfiguration.class);
+    private static final String propertiesFile = "classpath:/config/iam/identities.ldif";
+    private static final String embeddedLDAP = "embeddedLDAP";
 
-    @Value("${iam.backend}")
-    private  String backend;
+    private static String backend;
 
-    @Value("${ldap.host}")
-    private  String host;
+    public static void boot() throws Exception{
 
-    @Value("${ldap.port}")
-    private  int port;
+        logger.info("Loading IAM configuration");
+        loadProperties();
 
-    @Value("${dn.base}")
-    private  String baseDn;
-
-    @Value("${identities.ldif}")
-    private  String identitiesLDIF;
-
-    /*public IAMBootstrapConfiguration(){
-
-    }*/
-
-    @PostConstruct
-    public void boot() throws Exception{
-        System.out.println(this.backend);
-        System.out.println(this.host);
-        System.out.println(this.port);
-        System.out.println(this.identitiesLDIF);
-
-        if (this.backend.equals(ldapBackend)){
-            LDAPBootstrap.boot(host,port,baseDn,identitiesLDIF);
+        if (backend.equals(embeddedLDAP)){
+            LDAPBootstrap.boot();
         }
     }
 
-    @PreDestroy
-    public void stop() throws Exception {
-        if (this.backend.equals(ldapBackend)){
-            LDAPBootstrap.shutdown();
-        }
-    }
+   private static void loadProperties() throws IOException{
+       ApplicationContext appContext =
+               new ClassPathXmlApplicationContext();
+
+       PropertiesHelper propertiesHelper = new PropertiesHelper(propertiesFile);
+       backend = propertiesHelper.getValueAsString("iam.backend",embeddedLDAP);
+
+       //System.out.println(backend);
+   }
 }

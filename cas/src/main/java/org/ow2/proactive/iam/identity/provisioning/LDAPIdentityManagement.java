@@ -70,11 +70,13 @@ public class LDAPIdentityManagement implements IdentityManagement {
             entry.add("uid", id.getLogin());
             entry.add("cn", id.getName());
             entry.add("sn", id.getName());
+            entry.add("role",id.getRole());
             entry.add("userpassword", encryptPassword(encryptionAlgorithm, id.getPassword()));
             entry.add("objectClass", "top");
             entry.add("objectClass", "person");
             entry.add("objectClass", "organizationalPerson");
             entry.add("objectClass", "inetOrgPerson");
+            entry.add("objectClass", "extensibleObject");
             directoryService.getAdminSession().add(entry);
 
             logger.info("Identity successfully inserted: " + dn);
@@ -155,36 +157,5 @@ public class LDAPIdentityManagement implements IdentityManagement {
             }
         }
         return sEncrypted;
-    }
-
-    public void importLdif(BufferedInputStream ldifStream) throws Exception {
-
-        LdifReader ldifReader = new LdifReader(ldifStream);
-
-        try {
-            for (LdifEntry ldifEntry : ldifReader) {
-                checkPartition(ldifEntry);
-                logger.debug(ldifEntry.toString());
-                directoryService.getAdminSession().add(new DefaultEntry(directoryService.getSchemaManager(), ldifEntry.getEntry()));
-            }
-        } finally {
-            ldifReader.close();
-            logger.info("LDIF identities loaded");
-            System.out.println("LDIF identities loaded");
-        }
-    }
-
-    private void checkPartition(LdifEntry ldifEntry) throws Exception {
-        Dn dn = ldifEntry.getDn();
-        Dn parent = dn.getParent();
-        try {
-            directoryService.getAdminSession().exists(parent);
-        } catch (Exception e) {
-            logger.debug("Creating new partition for DN=" + dn + "\n");
-            AvlPartition partition = new AvlPartition(directoryService.getSchemaManager());
-            partition.setId(dn.getName());
-            partition.setSuffixDn(dn);
-            directoryService.addPartition(partition);
-        }
     }
 }

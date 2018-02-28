@@ -1,22 +1,15 @@
 package org.ow2.proactive.iam.backend.embedded.ldap;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-
 import javax.naming.NamingException;
 
 import org.apache.directory.server.core.api.DirectoryService;
 import org.apache.directory.server.core.api.InstanceLayout;
 import org.apache.directory.server.core.factory.DefaultDirectoryServiceFactory;
-import org.apache.directory.server.core.partition.impl.avl.AvlPartition;
 import org.apache.directory.server.ldap.LdapServer;
-import org.apache.directory.server.protocol.shared.store.LdifFileLoader;
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
-import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.exception.LdapException;
-import org.apache.directory.api.ldap.model.exception.LdapInvalidDnException;
-import org.apache.directory.api.ldap.model.name.Dn;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,25 +58,25 @@ public enum EmbeddedLdapServer {
     public void start(String host, Integer port) throws Exception {
 
         if (ldapServer.isStarted()) {
-            logger.warn("LDAP Server is already started !!");
+            logger.warn("LDAP server is already started !!");
         } else {
             init(host,port);
 
             directoryService.startup();
             ldapServer.start();
 
-            logger.info("LDAP Server started");
+            logger.info("LDAP server started");
         }
     }
 
     public void stop() throws Exception {
 
         if (!ldapServer.isStarted()) {
-            throw new IllegalStateException("Service is not running");
+          logger.warn("LDAP server is not running");
+        }else {
+            ldapServer.stop();
+            directoryService.shutdown();
         }
-
-        ldapServer.stop();
-        directoryService.shutdown();
     }
 
     public DirectoryService getdirectoryService() {

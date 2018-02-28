@@ -1,11 +1,11 @@
 package org.ow2.proactive.iam.bootstrap;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.web.CasWebApplicationContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,15 +23,12 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.util.Map;
 import lombok.NoArgsConstructor;
-
-import javax.annotation.PostConstruct;
 
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class,
@@ -47,12 +44,20 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class BootstrapApplication {
 
+    private static final Logger logger = LoggerFactory.getLogger(BootstrapApplication.class);
+
+
     /**
      * Main entry point of the CAS web application.
      * @param args the args
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws Exception {
 
+        //IAM bootstrap (start identity backend, load identities, ..)
+        logger.info("ProActive IAM bootstrap");
+        IAMBootstrapConfiguration.boot();
+
+        // CAS bootstrap
         final Map<String, Object> properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
         final Banner banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(BootstrapApplication.class).banner(banner).web(true).properties(properties).logStartupInfo(true).contextClass(CasWebApplicationContext.class).run(args);
