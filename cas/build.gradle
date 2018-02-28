@@ -64,20 +64,22 @@ dependencies {
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
 }
 
-task copyConfig(type: Copy, description: "Copy CAS configuration over to /etc/cas/config") {
+/*task copyConfig(type: Copy, description: "Copy CAS configuration over to /etc/cas/config") {
     doLast {
         from "${project.rootDir}/etc/cas/config"
         into '/etc/cas/config'
 
         println "Copied configuration files into /etc/cas/config"
     }
-}
+}*/
 
 war {
-    dependsOn copyConfig
+//    dependsOn copyConfig
     baseName 'cas'
     includeWarJars = true
     entryCompression = ZipEntryCompression.STORED
+    exclude('**/Apereo-10000002.json')
+    exclude('**/HTTPSandIMAPS-10000001.json')
 }
 
 task explodeWar(type: Copy, group: "build", description: "Explodes the cas.war") {
@@ -106,7 +108,6 @@ task debug(group: "build", description: "Debug the CAS web application in embedd
     dependsOn build
     doLast {
         def casDebugArgs = Arrays.asList(project.'cas.debug.jvmArgs'.split(" "))
-
         javaexec {
             main = "-jar";
             jvmArgs = casDebugArgs

@@ -27,24 +27,5 @@
     "@class" : "org.jasig.cas.services.ReturnAllAttributeReleasePolicy",
     "authorizedToReleaseCredentialPassword" : true
   }
-  /*"usernameAttributeProvider" : {
-    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
-    "usernameAttribute" : "uid",
-    "canonicalizationMode" : "UPPER"
-  },*/
-  /*"attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllAttributeReleasePolicy"
-    //"allowedAttributes" : [ "java.util.ArrayList", [ "uid", "cn", "sn" ] ]
-  }*/
-  /*"attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
-    "authorizedToReleaseCredentialPassword" : true,
-    "allowedAttributes" : {
-      "@class" : "java.util.TreeMap",
-      "sn" : "surname",
-      "cn" : "commonName",
-      "memberOf" : "Role"
-    }
-  }*/
 }
 

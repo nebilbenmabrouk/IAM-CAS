@@ -31,8 +31,11 @@ sn: Wiens
 uid: tobias
 #pwd: tobias
 userpassword: {SHA}BZuLiA+EQVCeyKZbULTGrnTr6nY=
+role: user
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
+objectClass: extensibleObject
+
 
 #######################PROACTIVE SYSTEM USERS######################
 # Admin   
@@ -43,8 +46,10 @@ sn: Admin
 uid: admin
 #pwd: admin
 userpassword: {SHA}0DPiKuNIrrVmD8IUCuw1hQxNqZc=
+role: admin
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
+objectClass: extensibleObject
 
 # RM
 
@@ -54,8 +59,10 @@ sn: rm
 uid: rm
 #pwd: rm_pwd
 userpassword: {SHA}Dkru1UG0cZwT8kTzYTpo1JdNzjY=
+role: admin
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
+objectClass: extensibleObject
 
 # Scheduler    
 
@@ -65,8 +72,10 @@ sn: scheduler
 uid: scheduler
 #pwd: scheduler_pwd
 userpassword: {SHA}IytUJHJqWza3bH8OAvdf7DARauc=
+role: admin
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
+objectClass: extensibleObject
 
 # radmin    
 
@@ -76,8 +85,10 @@ sn: radmin
 uid: radmin
 #pwd: pwd
 userpassword: {SHA}N/omUzCtg+qoee+x4ttjgIls9jk=
+role: admin
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
+objectClass: extensibleObject
 
 
 # nsadmin    
@@ -88,8 +99,10 @@ sn: nsadmin
 uid: nsadmin
 #pwd: pwd
 userpassword: {SHA}N/omUzCtg+qoee+x4ttjgIls9jk=
+role: admin
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
+objectClass: extensibleObject
 
 # watcher   
 
@@ -100,8 +113,10 @@ uid: watcher
 #pwd: watcher_pwd
 #userpassword: {SHA}0bDfjtFTW6MtWL0WRMtwu+s0lZc=
 userpassword: {SHA}zJJkLCnLFCT1MOlCVuwt/LRqxaA=
+role: watcher
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
+objectClass: extensibleObject
 
 # provider   
 
@@ -111,8 +126,10 @@ sn: provider
 uid: provider
 #pwd: pwd
 userpassword: {SHA}N/omUzCtg+qoee+x4ttjgIls9jk=
+role: admin
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
+objectClass: extensibleObject
 
 ###############################GROUPS############################
 # proactive end-user role

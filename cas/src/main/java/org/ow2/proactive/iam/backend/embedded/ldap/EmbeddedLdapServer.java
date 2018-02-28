@@ -25,38 +25,15 @@ public enum EmbeddedLdapServer {
     //singleton instance of EmbeddedLDAPServer
     INSTANCE;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     private static final String INSTANCE_NAME = "ProActiveEmbeddedLDAP";
     private static final String INSTANCE_PATH = "/tmp/ProActiveEmbeddedLDAP";
-    private static final String BASE_DN = "dc=activeeon,dc=com";
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static DirectoryService directoryService;
+    private static LdapServer ldapServer = new LdapServer();
 
-    private DirectoryService directoryService;
-    private LdapServer ldapService;
-
-    private String host;
-    private Integer port;
-
-    /*public EmbeddedLdapServer(final String host, final Integer port) {
-        this.host = host;
-        this.port = port;
-
-        try {
-            init();
-        } catch (IOException e) {
-            log.error("IOException while initializing EmbeddedLdapServer", e);
-        } catch (LdapException e) {
-            log.error("LdapException while initializing EmbeddedLdapServer", e);
-        } catch (NamingException e) {
-            log.error("NamingException while initializing EmbeddedLdapServer",
-                    e);
-        } catch (Exception e) {
-            log.error("Exception while initializing EmbeddedLdapServer", e);
-        }
-    }*/
-
-    private void init() throws Exception, IOException, LdapException,
-            NamingException {
+    private void init(String host, Integer port) throws Exception {
 
         try {
             DefaultDirectoryServiceFactory factory = new DefaultDirectoryServiceFactory();
@@ -69,76 +46,47 @@ public enum EmbeddedLdapServer {
             InstanceLayout il = new InstanceLayout(INSTANCE_PATH);
             directoryService.setInstanceLayout(il);
 
-            AvlPartition partition = new AvlPartition(
-                    directoryService.getSchemaManager());
-            partition.setId(INSTANCE_NAME);
-            partition.setSuffixDn(new Dn(directoryService.getSchemaManager(),
-                    BASE_DN));
-
-            //Should be removed
-            partition.initialize();
-            directoryService.addPartition(partition);
-
-            ldapService = new LdapServer();
-            ldapService.setTransports(new TcpTransport(host, port));
-            ldapService.setDirectoryService(directoryService);
+            ldapServer = new LdapServer();
+            ldapServer.setTransports(new TcpTransport(host, port));
+            ldapServer.setDirectoryService(directoryService);
+            
         } catch (IOException e) {
-            log.error("IOException while initializing EmbeddedLdapServer", e);
+            logger.error("IOException while initializing EmbeddedLdapServer", e);
         } catch (LdapException e) {
-            log.error("LdapException while initializing EmbeddedLdapServer", e);
+            logger.error("LdapException while initializing EmbeddedLdapServer", e);
         } catch (NamingException e) {
-            log.error("NamingException while initializing EmbeddedLdapServer",
+            logger.error("NamingException while initializing EmbeddedLdapServer",
                     e);
         } catch (Exception e) {
-            log.error("Exception while initializing EmbeddedLdapServer", e);
+            logger.error("Exception while initializing EmbeddedLdapServer", e);
         }
     }
 
     public void start(String host, Integer port) throws Exception {
 
-        if (ldapService.isStarted()) {
-            throw new IllegalStateException("Service already running");
+        if (ldapServer.isStarted()) {
+            logger.warn("LDAP Server is already started !!");
+        } else {
+            init(host,port);
+
+            directoryService.startup();
+            ldapServer.start();
+
+            logger.info("LDAP Server started");
         }
-
-        this.host = host;
-        this.port = port;
-
-        init();
-
-        directoryService.startup();
-        ldapService.start();
     }
 
     public void stop() throws Exception {
 
-        if (!ldapService.isStarted()) {
+        if (!ldapServer.isStarted()) {
             throw new IllegalStateException("Service is not running");
         }
 
-        ldapService.stop();
+        ldapServer.stop();
         directoryService.shutdown();
     }
 
-    public void applyLdif(final File ldifFile) throws Exception {
-        new LdifFileLoader(directoryService.getAdminSession(), ldifFile, null)
-                .execute();
-    }
-
-    public void createEntry(final String id,
-                            final Map<String, String[]> attributes) throws LdapException,
-            LdapInvalidDnException {
-
-        if (!ldapService.isStarted()) {
-            throw new IllegalStateException("Service is not running");
-        }
-
-        Dn dn = new Dn(directoryService.getSchemaManager(), id);
-        if (!directoryService.getAdminSession().exists(dn)) {
-            Entry entry = directoryService.newEntry(dn);
-            for (String attributeId : attributes.keySet()) {
-                entry.add(attributeId, attributes.get(attributeId));
-            }
-            directoryService.getAdminSession().add(entry);
-        }
+    public DirectoryService getdirectoryService() {
+        return directoryService.isStarted() ? directoryService : null;
     }
 }

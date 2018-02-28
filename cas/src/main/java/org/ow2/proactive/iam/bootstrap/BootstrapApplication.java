@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.web.CasWebApplicationContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,18 +23,16 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.util.Map;
 import lombok.NoArgsConstructor;
 
-/**
- * This is {@link BootstrapApplication}.
- *
- * @author Misagh Moayyed
- * @since 5.0.0
- */
+import javax.annotation.PostConstruct;
+
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class,
         GroovyTemplateAutoConfiguration.class, JmxAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class,
@@ -45,17 +44,14 @@ import lombok.NoArgsConstructor;
 @EnableScheduling
 @Slf4j
 @NoArgsConstructor
+@Configuration
 public class BootstrapApplication {
 
     /**
      * Main entry point of the CAS web application.
-     *
      * @param args the args
      */
     public static void main(final String[] args) {
-
-        LDAPBootstrap.startServer();
-        LDAPBootstrap.loadLDIF();
 
         final Map<String, Object> properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
         final Banner banner = CasEmbeddedContainerUtils.getCasBannerInstance();

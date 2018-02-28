@@ -12,10 +12,6 @@
     "location" : "classpath:/config/cas/activeeon-public.key",
     "algorithm" : "RSA"
   },
-  /*"attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllAttributeReleasePolicy",
-    "authorizedToReleaseCredentialPassword" : true
-  },*/
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
     "authorizedToReleaseCredentialPassword" : true,
