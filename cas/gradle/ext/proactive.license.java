@@ -23,17 +23,3 @@
  * If needed, contact us to obtain a release under GPL Version 2 or 3
  * or a different license than the AGPL.
  */
-package org.ow2.proactive.iam.identity.provisioning;
-
-interface IdentityManagement {
-
-    boolean insert(Identity id);
-
-    boolean edit(Identity id);
-
-    boolean search(Identity id);
-
-    boolean delete(Identity id);
-
-    String encryptPassword(String algorithm, String _password);
-}
