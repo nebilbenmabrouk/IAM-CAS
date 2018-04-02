@@ -1,9 +1,9 @@
-package org.ow2.proactive.iam.bootstrap;
+package org.ow2.proactive.iam.startup;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.web.CasWebApplicationContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
@@ -22,13 +22,14 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 import java.util.Map;
-import lombok.NoArgsConstructor;
+
 
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class,
@@ -39,28 +40,34 @@ import lombok.NoArgsConstructor;
 @EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
-@Slf4j
-@NoArgsConstructor
-@Configuration
-public class BootstrapApplication {
 
-    private static final Logger logger = LoggerFactory.getLogger(BootstrapApplication.class);
+public class IAMApplication  extends  SpringBootServletInitializer {
 
+    private static final Logger logger = LoggerFactory.getLogger(IAMApplication.class);
 
     /**
-     * Main entry point of the CAS web application.
+     * Main entry point of the IAM web application.
      * @param args the args
      */
     public static void main(final String[] args) throws Exception {
 
-        //IAM bootstrap (start identity backend, load identities, ..)
-        logger.info("ProActive IAM bootstrap");
-        IAMBootstrapConfiguration.boot();
+        //start IAM backend (start identity backend, load identities, ..)
+        logger.info("ProActive IAM starting");
+        IAMBackend.start();
 
-        // CAS bootstrap
+        // start CAS
         final Map<String, Object> properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
         final Banner banner = CasEmbeddedContainerUtils.getCasBannerInstance();
-        new SpringApplicationBuilder(BootstrapApplication.class).banner(banner).web(true).properties(properties).logStartupInfo(true).contextClass(CasWebApplicationContext.class).run(args);
+        new SpringApplicationBuilder(IAMApplication.class).banner(banner).web(true).properties(properties).logStartupInfo(false).contextClass(CasWebApplicationContext.class).run(args);
+    }
 
+
+    @Override
+    protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
+        final Map<String, Object> properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
+        return builder
+                .sources(IAMApplication.class)
+                .properties(properties)
+                .banner(CasEmbeddedContainerUtils.getCasBannerInstance());
     }
 }

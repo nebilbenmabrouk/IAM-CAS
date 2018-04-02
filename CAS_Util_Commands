@@ -1,0 +1,22 @@
+
+### Using generated keystore
+sudo keytool -genkeypair -keysize 2048 -alias activeeonkeystore -keypass proactive -keystore activeeonKeyStore -storepass proactive
+sudo keytool -exportcert -keystore activeeonKeyStore -alias activeeonkeystore -keypass proactive -file activeeon.der
+sudo keytool -import -keystore $JAVA_HOME/jre/lib/security/cacerts -file activeeon.crt -alias activeeonkeystore
+
+### Using PA keystore
+keytool -export -alias jetty -keystore $path_to_keystore -file keystore.crt
+keytool -import -keystore $PA_HOME/jre/lib/security/cacerts -file $path_to_keystore.crt
+
+### TGT
+curl -k  -X POST -d "username=scheduler&password=scheduler_pwd" https://localhost:8443/cas/v1/tickets
+#ANSWER
+<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>201 Created</title></head><body><h1>TGT Created</h1><form action="https://localhost:8443/cas/v1/tickets/TGT-6-cS39DsDtjIXUV4-zVF23dYys5GpfSIGPmWU7vdA8tzM0aI7FB4H52EG6BLPADMik3zA-activeeon" method="POST">Service:<input type="text" name="service" value=""><br><input type="submit" value="Submit"></form></body></html>
+
+### ST
+curl -k  -X POST -d "service=https://localhost:8444/iam-client-1" https://localhost:8443/cas/v1/tickets/TGT-6-cS39DsDtjIXUV4-zVF23dYys5GpfSIGPmWU7vdA8tzM0aI7FB4H52EG6BLPADMik3zA-activeeon
+#ANSWER
+ST-16-t2Tzt-tNjGWQEhH1KZ30nk4-Opg-activeeon
+
+
+

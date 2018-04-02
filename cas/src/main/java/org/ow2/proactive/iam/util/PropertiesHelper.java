@@ -28,12 +28,9 @@ package org.ow2.proactive.iam.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -80,7 +77,7 @@ public class PropertiesHelper {
                 throw new RuntimeException(e);
             }
         } else
-            throw new RuntimeException("Properties file not found : '" + propertiesFile + "'");
+            throw new RuntimeException("Properties file not found");
 
         return properties;
     }
@@ -112,22 +109,12 @@ public class PropertiesHelper {
     }
 
     /**
-     * Return all properties as a HashMap.
-     */
-    public Map<String, Object> getPropertiesAsHashMap() {
-        return new HashMap(getProperties());
-    }
-
-    /**
      * Returns the value of this property as an integer.
      * If value is not an integer, an exception will be thrown.
      *
      * @return the value of this property.
      */
-    public synchronized int getValueAsInt(String key, PropertyType type, int defaultValue) {
-        if (type != PropertyType.INTEGER) {
-            throw new IllegalArgumentException("Property " + key + " is not a " + PropertyType.INTEGER);
-        }
+    public synchronized int getValueAsInt(String key, int defaultValue) {
 
         String valueString = getValueAsString(key, String.valueOf(defaultValue));
 
@@ -242,11 +229,13 @@ public class PropertiesHelper {
             throw new IllegalArgumentException("Property " + key + " is not a " + PropertyType.BOOLEAN);
         }
         String valueString = getValueAsString(key, defaultValue);
-        if (valueString != null) {
+        /*if (valueString != null) {
             return Boolean.parseBoolean(valueString);
         } else {
             return false;
-        }
+        }*/
+
+        return valueString != null && Boolean.parseBoolean(valueString);
     }
 
 }

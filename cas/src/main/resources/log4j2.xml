@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="5" packages="org.apereo.cas.logging">
+<Configuration monitorInterval="5" >
     <Properties>
        <!-- <Property name="baseDir">/etc/cas/logs</Property> -->
-        <Property name="baseDir">/tmp/cas/logs</Property>
+       <Property name="pa.scheduler.home">.</Property>
     </Properties>
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
 
-        <RollingFile name="file" fileName="log/cas.log" append="true"
-                     filePattern="log/logArchive/cas-%d{yyyy-MM-dd-HH}-%i.log">
+        <RollingFile name="file" fileName="${sys:pa.scheduler.home}/logs/iam.log" append="true"
+                     filePattern="${sys:pa.scheduler.home}/logs/logArchive/iam-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;}%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -19,14 +19,14 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy max="5" compressionLevel="9">
-                <Delete basePath="${baseDir}" maxDepth="2">
+                <Delete basePath="${sys:pa.scheduler.home}" maxDepth="2">
                     <IfFileName glob="*/*.log.gz" />
                     <IfLastModified age="7d" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
-        <RollingFile name="auditlogfile" fileName="log/cas_audit.log" append="true"
-                     filePattern="log/logArchive/cas_audit-%d{yyyy-MM-dd-HH}-%i.log">
+        <RollingFile name="auditlogfile" fileName="${sys:pa.scheduler.home}/logs/iam_audit.log" append="true"
+                     filePattern="${sys:pa.scheduler.home}/logs/logArchive/iam_audit-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -34,15 +34,15 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy max="5" compressionLevel="9">
-                <Delete basePath="${baseDir}" maxDepth="2">
+                <Delete basePath="${sys:pa.scheduler.home}" maxDepth="2">
                     <IfFileName glob="*/*.log.gz" />
                     <IfLastModified age="7d" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
 
-        <RollingFile name="perfFileAppender" fileName="log/perfStats.log" append="true"
-                     filePattern="log/logArchive/perfStats-%d{yyyy-MM-dd-HH}-%i.log">
+        <RollingFile name="perfFileAppender" fileName="${sys:pa.scheduler.home}/logs/perfStats.log" append="true"
+                     filePattern="${sys:pa.scheduler.home}/logs/logArchive/perfStats-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -50,7 +50,7 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy max="5" compressionLevel="9">
-                <Delete basePath="${baseDir}" maxDepth="2">
+                <Delete basePath="${sys:pa.scheduler.home}" maxDepth="2">
                     <IfFileName glob="*/*.log.gz" />
                     <IfLastModified age="7d" />
                 </Delete>

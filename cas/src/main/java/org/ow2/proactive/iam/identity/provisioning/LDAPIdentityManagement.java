@@ -25,19 +25,15 @@
  */
 package org.ow2.proactive.iam.identity.provisioning;
 
-import java.io.BufferedInputStream;
 import java.security.MessageDigest;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import org.apache.directory.api.ldap.model.cursor.Cursor;
 import org.apache.directory.api.ldap.model.entry.*;
-import org.apache.directory.api.ldap.model.ldif.LdifEntry;
-import org.apache.directory.api.ldap.model.ldif.LdifReader;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.server.core.api.DirectoryService;
-import org.apache.directory.server.core.partition.impl.avl.AvlPartition;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,9 +87,9 @@ public class LDAPIdentityManagement implements IdentityManagement {
         try {
 
             Dn dn = new Dn("uid=" + id.getLogin() + "," + usersBase);
-            List<Modification> modifs = new ArrayList<Modification>();
+            List<Modification> modifications = new ArrayList<>();
             //add modifications
-            directoryService.getAdminSession().modify(dn, modifs);
+            directoryService.getAdminSession().modify(dn, modifications);
 
             logger.info("Entry successfully edited: " + dn);
             return true;
@@ -122,11 +118,12 @@ public class LDAPIdentityManagement implements IdentityManagement {
 
             Dn dn = new Dn("uid=" + id.getLogin() + "," + usersBase);
             Cursor<Entry> cursor = directoryService.getAdminSession().search(dn, "(objectclass=person)");
-            Iterator<Entry> iterator = cursor.iterator();
+            //Iterator<Entry> iterator = cursor.iterator();
 
-            while (iterator.hasNext()) {
-                logger.info("Identity found: " + iterator.next().getDn().toString());
+            for (Entry entry : cursor){
+                logger.info("Identity found: " + entry.getDn().toString());
             }
+
             return true;
 
         } catch (Exception e) {

@@ -1,12 +1,12 @@
 apply plugin: 'org.springframework.boot'
 apply from: 'https://dl.bintray.com/scalding/generic/waroverlay.gradle'
 apply from: 'https://raw.githubusercontent.com/apereo/cas/5.2.x/gradle/overrides.gradle'
-
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'war'
 
-configurations {
-    compile.exclude group: "org.apache.directory.api", module: "api-ldap-schema-data"
+configurations.compile {
+    exclude group: "org.apache.directory.api", module: "api-ldap-schema-data"
 }
 
 eclipse {
@@ -23,14 +23,20 @@ idea {
     }
 }
 
+springBoot {
+    mainClass = "org.ow2.proactive.iam.startup.IAMApplication"
+}
+
 bootRepackage {
-    //mainClass = "org.apereo.cas.web.CasWebApplication"
-    mainClass = "org.ow2.proactive.iam.bootstrap.BootstrapApplication"
-    executable = true
+    enabled = true
+    mainClass = "org.ow2.proactive.iam.startup.IAMApplication"
+    executable = false
+    excludeDevtools = true
 }
 
 bootRun {
     addResources = true
+    classpath = sourceSets.main.compileClasspath
 }
 
 repositories {
@@ -41,19 +47,20 @@ repositories {
 }
 
 dependencies {
-    //compile "org.apereo.cas:cas-server-webapp-tomcat:${project.'cas.version'}@war"
-    compile "org.apereo.cas:cas-server-webapp-jetty:${project.'cas.version'}@war"
+    providedRuntime "org.apereo.cas:cas-server-webapp-jetty:${project.'cas.version'}@war"
     compile "org.apereo.cas:cas-server-webapp-init:${project.'cas.version'}"
-    compile "org.apereo.cas:cas-server-support-ldap:${project.'cas.version'}"
+    //CAS JSON service registry
     compile "org.apereo.cas:cas-server-support-json-service-registry:${project.'cas.version'}"
-
-    //REST
+    //CAS REST
     compile "org.apereo.cas:cas-server-support-rest:${project.'cas.version'}"
-    //REST for JWT
+    //CAS REST for JWT
     compile "org.apereo.cas:cas-server-support-rest-tokens:${project.'cas.version'}"
-    //JWT
+    //CAS JWT
     compile "org.apereo.cas:cas-server-support-token-tickets:${project.'cas.version'}"
+    //CAS LDAP
+    compile "org.apereo.cas:cas-server-support-ldap:${project.'cas.version'}"
 
+    // Support IAM LDAP-backend (Apache DS)
     //compile group: 'org.apache.directory.server', name: 'apacheds-all', version: '2.0.0-M24'
     compile group: 'org.apache.directory.api', name: 'api-all', version: '1.0.0'
     compile group: 'org.apache.directory.server', name: 'apacheds-core-api', version: '2.0.0-M24'
@@ -61,20 +68,26 @@ dependencies {
     compile group: 'org.apache.directory.server', name: 'apacheds-core-annotations', version: '2.0.0-M24'
     compile group: 'org.apache.directory.server', name: 'apacheds-protocol-ldap', version: '2.0.0-M24'
 
-    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
+    //  To support SpringBootServletInitializer (when IAM is demployed as a traditional WAR file)
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
 }
 
 war {
-    baseName 'cas'
+    baseName 'iam'
     includeWarJars = true
     entryCompression = ZipEntryCompression.STORED
 
     //Remove default services from the registry
     exclude('**/Apereo-10000002.json')
     exclude('**/HTTPSandIMAPS-10000001.json')
+    rootSpec.exclude("**/spring-boot-devtools-1.5.8.RELEASE.jar")
+
+    manifest {
+        attributes 'Start-Class': 'org.ow2.proactive.iam.startup.IAMApplication'
+    }
 }
 
-task explodeWar(type: Copy, group: "build", description: "Explodes the cas.war") {
+task explodeWar(type: Copy, group: "build", description: "Explodes the iam.war") {
     doLast {
         from zipTree(project.war.outputs.files.singleFile)
         into "${buildDir}/cas"
@@ -87,9 +100,9 @@ task run(group: "build", description: "Run the CAS web application in embedded c
     doLast {
         def casRunArgs = Arrays.asList(project.'cas.run.jvmArgs'.split(" "))
         javaexec {
-            main = "-jar";
+            main = "-jar"
             jvmArgs = casRunArgs
-            args = ["build/libs/cas.war"]
+            args = ["build/libs/iam.war"]
 
             logger.info "Started ${commandLine}"
         }
@@ -101,9 +114,9 @@ task debug(group: "build", description: "Debug the CAS web application in embedd
     doLast {
         def casDebugArgs = Arrays.asList(project.'cas.debug.jvmArgs'.split(" "))
         javaexec {
-            main = "-jar";
+            main = "-jar"
             jvmArgs = casDebugArgs
-            args = ["build/libs/cas.war"]
+            args = ["build/libs/iam.war"]
 
             logger.info "Started ${commandLine}"
         }

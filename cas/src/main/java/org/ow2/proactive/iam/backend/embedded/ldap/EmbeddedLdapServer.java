@@ -26,7 +26,7 @@ public enum EmbeddedLdapServer {
     private static DirectoryService directoryService;
     private static LdapServer ldapServer = new LdapServer();
 
-    private void init(String host, Integer port) throws Exception {
+    private void init(String host, Integer port) {
 
         try {
             DefaultDirectoryServiceFactory factory = new DefaultDirectoryServiceFactory();
@@ -48,8 +48,7 @@ public enum EmbeddedLdapServer {
         } catch (LdapException e) {
             logger.error("LdapException while initializing EmbeddedLdapServer", e);
         } catch (NamingException e) {
-            logger.error("NamingException while initializing EmbeddedLdapServer",
-                    e);
+            logger.error("NamingException while initializing EmbeddedLdapServer", e);
         } catch (Exception e) {
             logger.error("Exception while initializing EmbeddedLdapServer", e);
         }
@@ -61,10 +60,8 @@ public enum EmbeddedLdapServer {
             logger.warn("LDAP server is already started !!");
         } else {
             init(host,port);
-
             directoryService.startup();
             ldapServer.start();
-
             logger.info("LDAP server started");
         }
     }

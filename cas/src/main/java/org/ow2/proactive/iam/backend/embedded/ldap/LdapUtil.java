@@ -46,18 +46,16 @@ public class LdapUtil {
         logger.debug("Partition '"+ dn.toString() +"' added to LDAP schema");
     }
 
-    public void importLdif(BufferedInputStream ldifStream) throws Exception {
+    public void importLdif(BufferedInputStream ldifStream) {
 
-        LdifReader ldifReader = new LdifReader(ldifStream);
-
-        try {
+        try (LdifReader ldifReader = new LdifReader(ldifStream)) {
             for (LdifEntry ldifEntry : ldifReader) {
                 //checkPartition(directoryService,ldifEntry);
                 directoryService.getAdminSession().add(new DefaultEntry(directoryService.getSchemaManager(), ldifEntry.getEntry()));
             }
-        } finally {
-            ldifReader.close();
             logger.info("Identities added to LDAP server");
+        } catch (Exception e) {
+            logger.error(e.getMessage());
         }
     }
 
